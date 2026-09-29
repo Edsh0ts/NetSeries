@@ -3,192 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Net Series</title>
+    <title>Net Series V6 - Premium Glass</title>
     <style>
-        /* APPLE GLASS & NETFLIX STYLING */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --glass-blur: blur(60px);
             --text-main: #ffffff;
-            --text-muted: #aaaaaa;
-            --accent: #007aff;
-            --bg-color: #0f0f13;
+            --text-muted: #888888;
+            --bg-color: #000000;
+            --accent: #0a84ff; 
+            --radius-pill: 999px;
+            --radius-lg: 30px;
+            --radius-md: 18px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
         
-        body {
-            background-color: var(--bg-color);
-            background-image: radial-gradient(circle at top right, #1a1a2e 0%, #0f0f13 100%);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
 
-        /* Navbar */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 50px;
-            background: rgba(15, 15, 19, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--glass-border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .glass-panel { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); }
 
-        .logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
-        .logo span { color: var(--accent); }
+        /* Navbar - Removed background bar behind navigation */
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 50px; position: sticky; top: 0; z-index: 100; background: transparent; }
 
-        .nav-links { display: flex; gap: 20px; }
-        .nav-links button {
-            background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; transition: 0.3s;
-        }
-        .nav-links button:hover, .nav-links button.active { color: white; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+        /* Logo: Net Series with white background and black text */
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .logo { width: 44px; height: 44px; background: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; color: black; font-weight: 800; font-size: 20px; }
+        .logo-text { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+        .logo-text span { color: black; background: white; padding: 2px 6px; border-radius: 6px; margin-left: 2px; }
 
-        .user-stats { display: flex; align-items: center; gap: 15px; }
-        .coin-badge {
-            background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 15px;
-            border-radius: 20px; font-weight: bold; color: gold; backdrop-filter: blur(10px);
-        }
+        .nav-tabs { display: flex; background: rgba(255,255,255,0.05); border-radius: var(--radius-pill); padding: 5px; position: relative; border: 1px solid var(--glass-border); backdrop-filter: var(--glass-blur); }
+        .nav-tabs button { background: transparent; border: none; color: var(--text-muted); font-size: 13px; font-weight: 600; padding: 10px 18px; cursor: pointer; transition: color 0.3s; border-radius: var(--radius-pill); z-index: 2; outline: none; }
+        .nav-tabs button.active { color: white; }
+        .tab-indicator { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); width: 75px; background: var(--accent); border-radius: var(--radius-pill); z-index: 1; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), width 0.4s; }
 
-        /* Main Container */
-        .container { padding: 40px 50px; display: none; }
-        .container.active { display: block; animation: fadeIn 0.5s ease; }
+        .coin-badge { display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius-pill); font-weight: 600; font-size: 14px; border: 1px solid var(--glass-border); backdrop-filter: var(--glass-blur); }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .container { display: none; opacity: 0; transition: opacity 0.4s ease; padding-bottom: 100px; }
+        .container.active { display: block; opacity: 1; }
 
-        /* Netflix Rows */
-        .row-title { font-size: 22px; margin-bottom: 15px; font-weight: 600; }
-        .series-row {
-            display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none;
-        }
+        .hero-section { width: 100%; height: 75vh; position: relative; display: flex; align-items: flex-end; padding: 80px 50px; background-size: cover; background-position: top center; border-bottom: 1px solid var(--glass-border); margin-bottom: 40px; }
+        .hero-fade { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top, #000000 0%, rgba(0,0,0,0) 80%); }
+        .hero-content { position: relative; z-index: 10; max-width: 600px; }
+        .hero-logo { max-width: 350px; max-height: 150px; object-fit: contain; margin-bottom: 20px; }
+        .play-hero-btn { background: white; color: black; border: none; padding: 15px 40px; border-radius: var(--radius-pill); font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.2s; }
+        .play-hero-btn:hover { transform: scale(1.05); }
+
+        .row-container { padding: 0 50px; margin-bottom: 40px; }
+        .section-title { font-size: 20px; font-weight: 600; margin-bottom: 20px; color: white; }
+        .series-row { display: flex; gap: 20px; overflow-x: auto; scrollbar-width: none; padding-bottom: 20px; }
         .series-row::-webkit-scrollbar { display: none; }
 
-        /* Series Card (Apple Glass) */
-        .series-card {
-            min-width: 250px; height: 140px; border-radius: 15px; position: relative; cursor: pointer;
-            overflow: hidden; border: 1px solid var(--glass-border); transition: 0.3s;
-            background-size: cover; background-position: center;
-        }
-        .series-card:hover { transform: scale(1.05); border-color: rgba(255,255,255,0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .card-overlay {
-            position: absolute; bottom: 0; width: 100%; padding: 15px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.9));
-        }
-        .badge {
-            position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 0, 0.8);
-            color: white; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 10px;
-            backdrop-filter: blur(5px);
-        }
+        /* Cards do not grow on hover anymore */
+        .series-card { min-width: 180px; height: 270px; border-radius: var(--radius-md); position: relative; cursor: pointer; border: 1px solid var(--glass-border); background-size: cover; background-position: center; transition: border 0.3s; }
+        .series-card:hover { border-color: rgba(255,255,255,0.3); }
+        .card-logo-container { position: absolute; bottom: 0; width: 100%; height: 50%; display: flex; justify-content: center; align-items: flex-end; padding: 15px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); border-radius: 0 0 var(--radius-md) var(--radius-md); }
+        .card-logo { max-width: 80%; max-height: 50px; object-fit: contain; }
+        .badge { position: absolute; top: 12px; right: 12px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); color: white; font-size: 10px; font-weight: 800; padding: 5px 10px; border-radius: var(--radius-pill); border: 1px solid var(--glass-border); }
 
-        /* Modal / Episode View */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            display: none; justify-content: center; align-items: center; z-index: 200;
-        }
-        .modal-content {
-            background: var(--glass-bg); border: 1px solid var(--glass-border); width: 80%; max-width: 800px;
-            border-radius: 20px; padding: 30px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
-        
-        .episode-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
-        .episode-item {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px;
-        }
-        .buy-btn { background: #007aff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .play-btn { background: #34c759; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        
-        /* Input & Forms */
-        .glass-input {
-            width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
-            color: white; border-radius: 10px; font-size: 16px; margin-bottom: 15px; outline: none;
-            backdrop-filter: blur(10px);
-        }
-        .glass-btn {
-            width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
-            color: white; border-radius: 10px; font-size: 16px; cursor: pointer; transition: 0.3s; font-weight: bold;
-        }
-        .glass-btn:hover { background: rgba(255,255,255,0.2); }
+        .btn-glass { background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--glass-border); padding: 15px 30px; border-radius: var(--radius-pill); cursor: pointer; font-weight: 600; font-size: 14px; backdrop-filter: var(--glass-blur); transition: background 0.2s; width: 100%; outline: none; }
+        .btn-glass:hover { background: rgba(255,255,255,0.1); }
+        .input-glass { width: 100%; padding: 20px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: var(--radius-pill); font-size: 16px; margin-bottom: 20px; outline: none; text-align: center; backdrop-filter: var(--glass-blur); }
 
-        /* Mining Section */
-        .mining-area { text-align: center; padding: 50px; background: var(--glass-bg); border-radius: 20px; border: 1px solid var(--glass-border); }
-        .mine-btn {
-            width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #333, #111);
-            border: 2px solid var(--glass-border); color: gold; font-size: 20px; font-weight: bold; cursor: pointer;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); transition: 0.1s;
-        }
-        .mine-btn:active { transform: scale(0.95); box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); display: none; justify-content: center; align-items: center; z-index: 200; }
+        .modal-content { width: 95%; max-width: 1000px; padding: 40px; position: relative; display: flex; gap: 40px; border-radius: var(--radius-lg); border: 1px solid var(--glass-border); background: rgba(10,10,10,0.6); }
+        .close-btn { position: absolute; top: 25px; right: 25px; background: transparent; border: none; color: var(--text-muted); font-size: 30px; cursor: pointer; font-weight: 300; outline: none; -webkit-tap-highlight-color: transparent; transition: color 0.2s; }
+        .close-btn:focus, .close-btn:active { outline: none; background: transparent; box-shadow: none; border: none; }
+        .close-btn:hover { color: white; }
+
+        .modal-right { flex: 2; display: flex; flex-direction: column; }
+        .modal-logo { max-width: 100%; max-height: 100px; object-fit: contain; margin-bottom: 20px; }
         
-        #video-player { width: 100%; border-radius: 15px; margin-top: 15px; display: none; }
+        .episode-list { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; max-height: 40vh; padding-right: 10px; }
+        .episode-item { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: var(--radius-md); }
+        .ep-title { font-size: 15px; font-weight: 600; }
+
+        .video-container { position: relative; width: 100%; border-radius: var(--radius-md); overflow: hidden; background: #000; display: none; margin-bottom: 20px; border: 1px solid var(--glass-border); }
+        video { width: 100%; display: block; }
+        .player-controls { position: absolute; bottom: 0; left: 0; width: 100%; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); display: flex; align-items: center; gap: 15px; opacity: 0; transition: opacity 0.3s; }
+        .video-container:hover .player-controls { opacity: 1; }
+        .ctrl-btn { background: none; border: none; color: white; font-size: 18px; cursor: pointer; outline: none; }
+        .progress-bar-container { flex: 1; height: 6px; background: rgba(255,255,255,0.2); border-radius: var(--radius-pill); cursor: pointer; position: relative; }
+        .progress-bar-fill { height: 100%; background: white; width: 0%; border-radius: var(--radius-pill); }
+        .volume-slider { width: 80px; cursor: pointer; accent-color: white; }
     </style>
 </head>
 <body>
 
     <nav>
-        <div class="logo">Net<span>Series</span></div>
-        <div class="nav-links">
-            <button class="active" onclick="showPage('home')">Home</button>
-            <button onclick="showPage('earn')">Earn Coins</button>
-            <button onclick="showPage('codes')">Enter Code</button>
-            <button id="ownerTabBtn" style="display:none; color: red;" onclick="showPage('owner')">Owner Panel</button>
+        <div class="logo-container">
+            <div class="logo">N</div>
+            <div class="logo-text">NET<span>SERIES</span></div>
         </div>
-        <div class="user-stats">
-            <div class="coin-badge">💰 <span id="coinCount">0</span></div>
+        
+        <div class="nav-tabs">
+            <div class="tab-indicator" id="tabIndicator"></div>
+            <button class="active" onclick="showPage('home', this)">Home</button>
+            <button onclick="showPage('resume', this)">Resume</button>
+            <button onclick="showPage('unlocked', this)">Unlocked</button>
+            <button onclick="showPage('earn', this)">Earn</button>
+            <button onclick="showPage('codes', this)">Redeem</button>
+            <button id="ownerTabBtn" style="display:none; color: white;" onclick="showPage('owner', this)">Admin</button>
+        </div>
+
+        <div class="coin-badge glass-panel">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path><path d="M12 18V6"></path></svg>
+            <span id="coinCount">0</span>
         </div>
     </nav>
 
     <!-- HOME PAGE -->
     <div id="home" class="container active">
-        <h2 class="row-title">Trending Now</h2>
-        <div class="series-row" id="trending-row"></div>
+        <div class="hero-section" id="heroBanner">
+            <div class="hero-fade"></div>
+            <div class="hero-content">
+                <img id="heroLogo" class="hero-logo" src="" alt="Series Logo">
+                <button class="play-hero-btn" onclick="openHeroSeries()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    Play Now
+                </button>
+            </div>
+        </div>
+
+        <div class="row-container">
+            <h2 class="section-title">Originals</h2>
+            <div class="series-row" id="trending-row"></div>
+        </div>
     </div>
 
-    <!-- EARN COINS PAGE -->
+    <!-- RESUME PAGE -->
+    <div id="resume" class="container">
+        <div class="row-container" style="margin-top: 40px;">
+            <h2 class="section-title">Continue Watching</h2>
+            <div class="series-row" id="resume-page-row"></div>
+            <p id="noResumeText" style="color: var(--text-muted); font-size: 14px; display: none;">No series to resume right now.</p>
+        </div>
+    </div>
+
+    <!-- UNLOCKED EPISODES PAGE -->
+    <div id="unlocked" class="container">
+        <div class="row-container" style="margin-top: 40px;">
+            <h2 class="section-title">Your Unlocked Episodes</h2>
+            <div class="episode-list" id="unlockedEpisodeList" style="max-height: 70vh;"></div>
+            <p id="noUnlockedText" style="color: var(--text-muted); font-size: 14px; display: none;">You haven't unlocked any episodes yet.</p>
+        </div>
+    </div>
+
+    <!-- EARN PAGE -->
     <div id="earn" class="container">
-        <div class="mining-area">
-            <h2>Crypto-Mine for Coins</h2>
-            <p style="color: var(--text-muted); margin: 10px 0 30px 0;">It takes intense effort to earn. Click the core rapidly. Every 50 clicks earns you 10 coins.</p>
-            <button class="mine-btn" onclick="mineCoin()">MINE</button>
-            <p style="margin-top: 20px;">Clicks: <span id="clickCount">0</span> / 50</p>
+        <div style="max-width: 500px; margin: 80px auto; text-align: center;">
+            <div class="glass-panel" style="padding: 50px;">
+                <h2 style="font-weight: 600; margin-bottom: 10px;">Extract Blocks</h2>
+                <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px;">Tap to extract network codes for coins.</p>
+                <button class="btn-glass" style="width: 150px; height: 150px; border-radius: 50%; font-size: 18px;" onclick="mineCoin()">EXTRACT</button>
+                <div style="margin-top: 30px; border-top: 1px solid var(--glass-border); padding-top: 30px;">
+                    <h3 style="font-size: 16px; margin-bottom: 15px;">Auto-Miners (<span id="minerCount">0</span>)</h3>
+                    <button class="btn-glass" onclick="buyAutoMiner()">Buy Upgrade (<span id="minerCost">100</span>)</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- CODE ENTRY PAGE -->
+    <!-- REDEEM PAGE -->
     <div id="codes" class="container">
-        <div style="max-width: 400px; margin: 50px auto; text-align: center; background: var(--glass-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(20px);">
-            <h2 style="margin-bottom: 20px;">Redeem Code</h2>
-            <input type="text" id="codeInput" class="glass-input" placeholder="Enter secret code here...">
-            <button class="glass-btn" onclick="redeemCode()">Submit Code</button>
-            <p id="codeMessage" style="margin-top: 15px; font-weight: bold;"></p>
+        <div style="max-width: 450px; margin: 100px auto; text-align: center;">
+            <div class="glass-panel" style="padding: 50px;">
+                <h2 style="margin-bottom: 30px; font-weight: 600;">Promotional Code</h2>
+                <input type="text" id="codeInput" class="input-glass" placeholder="Enter code...">
+                <button class="btn-glass" style="background: white; color: black;" onclick="redeemCode()">Submit</button>
+                <p id="codeMessage" style="margin-top: 20px; font-weight: 600; font-size: 14px;"></p>
+            </div>
         </div>
     </div>
 
-    <!-- OWNER PANEL -->
+    <!-- ADMIN PANEL -->
     <div id="owner" class="container">
-        <div style="background: rgba(255,0,0,0.1); border: 1px solid red; padding: 40px; border-radius: 20px;">
-            <h2 style="color: red;">Welcome, Boss.</h2>
-            <p>Owner tools unlocked.</p>
-            <br>
-            <button class="glass-btn" onclick="giveFreeCoins(10000)">Add 10,000 Coins to Account</button>
-            <br><br>
-            <button class="glass-btn" onclick="resetAccount()">Wipe Account Data</button>
+        <div style="max-width: 450px; margin: 100px auto; text-align: center;">
+            <div class="glass-panel" style="padding: 50px; border-color: rgba(255,255,255,0.2);">
+                <h2 style="margin-bottom: 30px;">System Override</h2>
+                <button class="btn-glass" style="margin-bottom: 15px;" onclick="giveFreeCoins(10000)">Inject 10k Coins</button>
+                <button class="btn-glass" onclick="resetAccount()">Wipe Database</button>
+            </div>
         </div>
     </div>
 
     <!-- SERIES MODAL -->
     <div id="seriesModal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content glass-panel">
             <button class="close-btn" onclick="closeModal()">×</button>
-            <h2 id="modalTitle">Series Title</h2>
-            <video id="video-player" controls></video>
-            <div class="episode-list" id="episodeList"></div>
+            <div class="modal-right">
+                <img id="modalLogo" class="modal-logo" src="" alt="Series Logo">
+                <div class="video-container" id="customPlayerWrapper">
+                    <video id="video-player"></video>
+                    <div class="player-controls">
+                        <button class="ctrl-btn" id="playPauseBtn" onclick="togglePlay()">▶</button>
+                        <div class="progress-bar-container" id="progressContainer" onclick="seekVideo(event)">
+                            <div class="progress-bar-fill" id="progressFill"></div>
+                        </div>
+                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="1" oninput="changeVolume()">
+                        <button class="ctrl-btn" onclick="toggleFullscreen()">[ ]</button>
+                    </div>
+                </div>
+                <div class="episode-list" id="episodeList"></div>
+            </div>
         </div>
     </div>
 
@@ -197,230 +217,290 @@
         // ============================ 🛠️ EASY EDIT ZONE 🛠️ ==============================
         // ====================================================================================
         
-        // Add, remove, or edit your series here! Just follow the pattern.
+        const PROMO_CODES = [
+            // Coin codes
+            { code: "FREE500", type: "coins", amount: 500, message: "+500 Coins added!" },
+            { code: "STARTMEUP", type: "coins", amount: 1500, message: "+1500 Coins starting bonus!" },
+            { code: "RICH_KID", type: "coins", amount: 999999, message: "Cheat Activated: Unlimited Coins." },
+            
+            // System codes
+            { code: "NET_GODMODE", type: "godmode", amount: 0, message: "System Bypass: All Series Unlocked." },
+            { code: "SUDO_ADMIN", type: "admin", amount: 0, message: "Admin Override Unlocked." },
+
+            // 🎟️ CUSTOM CODES FOR SPECIFIC EPISODES OR SHOWS:
+            // Type "episode" with targetId as the episode id (e.g., "c1_ep1")
+            { code: "plsgimmeonepiece", type: "show", targetId: "onepiece", message: " Here You Go Bruder" },
+            
+            // Type "series" with targetId as the series id (e.g., "series_01")
+            { code: "UNLOCK_SHOW1", type: "series", targetId: "series_01", message: "Entire Show Unlocked Successfully!" }
+        ];
+
+        const FEATURED_SERIES_ID = "onepiece"; 
+
         const DATABASE = [
             {
-                id: "onepiece",                                      // A unique ID for the code
-                title: "One Piece",                                // Title of the show
-                image: "https://m.media-amazon.com/images/M/MV5BMTNjNGU4NTUtYmVjMy00YjRiLTkxMWUtNzZkMDNiYjZhNmViXkEyXkFqcGc@._V1_.jpg", // Image URL
-                comingSoon: false,                                    // true or false
+                id: "onepiece",
+                logo: "https://thumb.wikimedia.org/wikipedia/en/thumb/1/13/One_Piece_Anime_Logo_International.png/250px-One_Piece_Anime_Logo_International.png?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail", 
+                image: "https://m.media-amazon.com/images/M/MV5BMTNjNGU4NTUtYmVjMy00YjRiLTkxMWUtNzZkMDNiYjZhNmViXkEyXkFqcGc@._V1_.jpg", 
+                heroBg: "https://a.storyblok.com/f/178900/892x502/3982a59c15/luffy-the-one-piece.jpg", 
+                comingSoon: false,
                 episodes: [
-                    { id: "c1_ep1", title: "EP 1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
-                    { id: "c1_ep2", title: "EP 2", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
+                    { id: "c1_ep1", title: "EP 1", videoUrl: "https://files.catbox.moe/0e2lz3.mp4" },
+                    { id: "c1_ep2", title: "EP 2", videoUrl: "https://files.catbox.moe/dc8tyw.mp4" },
+                    { id: "c1_ep3", title: "EP 3", videoUrl: "https://files.catbox.moe/y233kw.mp4" },
+                    { id: "c1_ep4", title: "EP 4", videoUrl: "https://files.catbox.moe/jr5625.mp4" },
+                    { id: "c1_ep5", title: "EP 5", videoUrl: "https://files.catbox.moe/fo6i5k.mp4" },
+                    { id: "c1_ep6", title: "EP 6", videoUrl: "https://files.catbox.moe/2mnev2.mp4" },
+                    { id: "c1_ep7", title: "EP 7", videoUrl: "https://files.catbox.moe/anlfpk.mp4" },
+                    { id: "c1_ep8", title: "EP 8", videoUrl: "https://files.catbox.moe/hj6p7n.mp4" },
+                    { id: "c1_ep9", title: "EP 9", videoUrl: "https://files.catbox.moe/blcidb.mp4" },
+                    { id: "c1_ep10", title: "EP 10", videoUrl: "https://files.catbox.moe/qp72ux.mp4" }
                 ]
             },
             {
                 id: "series_02",
-                title: "Space Frontiers",
-                image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=500",
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/256px-Amazon_Prime_Video_logo.svg.png", 
+                image: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500",
+                heroBg: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920",
                 comingSoon: false,
                 episodes: [
-                    { id: "sp_ep1", title: "Episode 1: Liftoff", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
+                    { id: "sp_ep1", title: "EP 1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
                 ]
             },
             {
                 id: "series_03",
-                title: "Dark Matter (Coming Soon)",
-                image: "https://images.unsplash.com/photo-1503431128871-161c60c60efa?w=500",
-                comingSoon: true, // This puts a "COMING SOON" badge on it
+                logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/256px-Amazon_Prime_Video_logo.svg.png", 
+                image: "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=500",
+                heroBg: "https://images.unsplash.com/photo-1542281286-9e0a16bb7366?w=1920",
+                comingSoon: true,
                 episodes: []
             }
         ];
 
         // ====================================================================================
-        // =========================== ⚙️ APP LOGIC (DO NOT TOUCH) ⚙️ =========================
+        // =========================== ⚙ APP LOGIC (DO NOT TOUCH) ⚙️ =========================
         // ====================================================================================
 
         let coins = parseInt(localStorage.getItem("netSeriesCoins")) || 0;
         let unlockedEpisodes = JSON.parse(localStorage.getItem("netSeriesUnlocked")) || [];
+        let autoMiners = parseInt(localStorage.getItem("netSeriesAutoMiners")) || 0;
+        let lastWatched = localStorage.getItem("netSeriesResume") || null;
         let isOwner = localStorage.getItem("netSeriesOwner") === "true";
         let godMode = localStorage.getItem("netSeriesGodMode") === "true";
         let mineClicks = 0;
-
         const PRICE_PER_EPISODE = 500;
 
-        // Initialize App
+        const video = document.getElementById('video-player');
+        const playBtn = document.getElementById('playPauseBtn');
+        const progressFill = document.getElementById('progressFill');
+        const progressContainer = document.getElementById('progressContainer');
+        const volumeSlider = document.getElementById('volumeSlider');
+
         function init() {
-            updateCoinDisplay();
-            renderSeries();
+            updateCoinDisplay(); updateMinerUI(); setupHero(); renderSeries(); renderResumePage(); renderUnlockedPage();
             if(isOwner) document.getElementById('ownerTabBtn').style.display = 'block';
         }
 
-        // Navigation
-        function showPage(pageId) {
-            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-links button').forEach(el => el.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            event.target.classList.add('active');
+        function showPage(pageId, btnElement) {
+            document.querySelectorAll('.container').forEach(el => {
+                el.classList.remove('active'); setTimeout(() => el.style.display = 'none', 300);
+            });
+            const tabs = document.querySelectorAll('.nav-tabs button');
+            tabs.forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
             
-            // Stop video if navigating away
-            document.getElementById('video-player').pause();
-            document.getElementById('video-player').style.display = 'none';
+            const indicator = document.getElementById('tabIndicator');
+            indicator.style.width = btnElement.offsetWidth + 'px';
+            indicator.style.transform = `translateX(${btnElement.offsetLeft - 5}px)`;
+            
+            setTimeout(() => {
+                const target = document.getElementById(pageId);
+                target.style.display = 'block';
+                setTimeout(() => target.classList.add('active'), 10);
+            }, 300);
+            video.pause(); document.getElementById('customPlayerWrapper').style.display = 'none';
+
+            if(pageId === 'resume') renderResumePage();
+            if(pageId === 'unlocked') renderUnlockedPage();
         }
 
-        // Render Netflix Rows
+        function setupHero() {
+            const heroSeries = DATABASE.find(s => s.id === FEATURED_SERIES_ID);
+            if(heroSeries) {
+                document.getElementById('heroBanner').style.backgroundImage = `url('${heroSeries.heroBg || heroSeries.image}')`;
+                document.getElementById('heroLogo').src = heroSeries.logo;
+            }
+        }
+
+        function openHeroSeries() { openSeries(FEATURED_SERIES_ID); }
+
         function renderSeries() {
             const row = document.getElementById('trending-row');
             row.innerHTML = '';
-
             DATABASE.forEach(series => {
                 const card = document.createElement('div');
                 card.className = 'series-card';
                 card.style.backgroundImage = `url('${series.image}')`;
                 card.onclick = () => openSeries(series.id);
-
                 let badgeHtml = series.comingSoon ? `<div class="badge">COMING SOON</div>` : '';
-
-                card.innerHTML = `
-                    ${badgeHtml}
-                    <div class="card-overlay">
-                        <h3>${series.title}</h3>
-                    </div>
-                `;
+                card.innerHTML = `${badgeHtml}<div class="card-logo-container"><img src="${series.logo}" class="card-logo"></div>`;
                 row.appendChild(card);
             });
         }
 
-        // Open Series Modal
-        function openSeries(seriesId) {
-            const series = DATABASE.find(s => s.id === seriesId);
-            if(series.comingSoon) {
-                alert("This series is coming soon!");
-                return;
-            }
-
-            document.getElementById('modalTitle').innerText = series.title;
-            document.getElementById('video-player').style.display = 'none';
-            document.getElementById('video-player').pause();
+        function renderResumePage() {
+            const row = document.getElementById('resume-page-row');
+            const noResumeText = document.getElementById('noResumeText');
+            row.innerHTML = '';
             
-            const list = document.getElementById('episodeList');
+            if(lastWatched) {
+                const series = DATABASE.find(s => s.id === lastWatched);
+                if(series) {
+                    noResumeText.style.display = 'none';
+                    const card = document.createElement('div');
+                    card.className = 'series-card';
+                    card.style.backgroundImage = `url('${series.image}')`;
+                    card.onclick = () => openSeries(series.id);
+                    card.innerHTML = `<div class="badge" style="background: white; color: black;">RESUME</div><div class="card-logo-container"><img src="${series.logo}" class="card-logo"></div>`;
+                    row.appendChild(card);
+                    return;
+                }
+            }
+            noResumeText.style.display = 'block';
+        }
+
+        function renderUnlockedPage() {
+            const list = document.getElementById('unlockedEpisodeList');
+            const noUnlockedText = document.getElementById('noUnlockedText');
             list.innerHTML = '';
 
-            series.episodes.forEach(ep => {
-                const isUnlocked = unlockedEpisodes.includes(ep.id) || godMode;
-                
-                const item = document.createElement('div');
-                item.className = 'episode-item';
-                
-                let btnHtml = isUnlocked 
-                    ? `<button class="play-btn" onclick="playVideo('${ep.videoUrl}')">▶ Play</button>`
-                    : `<button class="buy-btn" onclick="buyEpisode('${ep.id}')">Unlock (500 💰)</button>`;
-
-                item.innerHTML = `
-                    <span style="font-weight: 500;">${ep.title}</span>
-                    ${btnHtml}
-                `;
-                list.appendChild(item);
+            let hasUnlocked = false;
+            DATABASE.forEach(series => {
+                series.episodes.forEach(ep => {
+                    if(unlockedEpisodes.includes(ep.id) || godMode) {
+                        hasUnlocked = true;
+                        const item = document.createElement('div');
+                        item.className = 'episode-item';
+                        item.innerHTML = `
+                            <div>
+                                <span style="display:block; font-size:12px; color:var(--text-muted); margin-bottom:4px;">${series.id.toUpperCase()}</span>
+                                <span class="ep-title">${ep.title}</span>
+                            </div>
+                            <button class="btn-glass" style="width:auto; background:white; color:black;" onclick="openSeriesAndPlay('${series.id}', '${ep.videoUrl}')">Watch</button>
+                        `;
+                        list.appendChild(item);
+                    }
+                });
             });
 
+            noUnlockedText.style.display = hasUnlocked ? 'none' : 'block';
+        }
+
+        function openSeriesAndPlay(seriesId, url) {
+            openSeries(seriesId);
+            playVideo(url, seriesId);
+        }
+
+        function openSeries(seriesId) {
+            const series = DATABASE.find(s => s.id === seriesId);
+            if(series.comingSoon) { alert("This series is in production."); return; }
+            document.getElementById('modalLogo').src = series.logo;
+            document.getElementById('customPlayerWrapper').style.display = 'none';
+            video.pause();
+            const list = document.getElementById('episodeList');
+            list.innerHTML = '';
+            series.episodes.forEach(ep => {
+                const isUnlocked = unlockedEpisodes.includes(ep.id) || godMode;
+                const item = document.createElement('div');
+                item.className = 'episode-item';
+                let btnHtml = isUnlocked 
+                    ? `<button class="btn-glass" style="width:auto; background:white; color:black;" onclick="playVideo('${ep.videoUrl}', '${seriesId}')">Play</button>`
+                    : `<button class="btn-glass" style="width:auto;" onclick="buyEpisode('${ep.id}', '${seriesId}')">Unlock (500)</button>`;
+                item.innerHTML = `<span class="ep-title">${ep.title}</span>${btnHtml}`;
+                list.appendChild(item);
+            });
             document.getElementById('seriesModal').style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('seriesModal').style.display = 'none';
-            document.getElementById('video-player').pause();
+        function closeModal() { document.getElementById('seriesModal').style.display = 'none'; video.pause(); renderUnlockedPage(); }
+
+        function playVideo(url, seriesId) {
+            document.getElementById('customPlayerWrapper').style.display = 'block';
+            video.src = url; video.play(); playBtn.innerText = "⏸";
+            lastWatched = seriesId; localStorage.setItem("netSeriesResume", seriesId);
         }
 
-        function playVideo(url) {
-            const player = document.getElementById('video-player');
-            player.style.display = 'block';
-            player.src = url;
-            player.play();
+        function buyEpisode(epId, seriesId) {
+            if(coins >= PRICE_PER_EPISODE) { coins -= PRICE_PER_EPISODE; unlockedEpisodes.push(epId); saveData(); openSeries(seriesId); } 
+            else { alert("Insufficient funds."); }
         }
 
-        // Economy Logic
-        function buyEpisode(epId) {
-            if(coins >= PRICE_PER_EPISODE) {
-                coins -= PRICE_PER_EPISODE;
-                unlockedEpisodes.push(epId);
-                saveData();
-                openSeries(DATABASE.find(s => s.episodes.some(e => e.id === epId)).id); // refresh modal
-            } else {
-                alert("Not enough coins! You need 500. Go mine some or use a code.");
-            }
-        }
+        function togglePlay() { if (video.paused) { video.play(); playBtn.innerText = "⏸"; } else { video.pause(); playBtn.innerText = "▶"; } }
+        video.addEventListener('timeupdate', () => { progressFill.style.width = ((video.currentTime / video.duration) * 100) + '%'; });
+        function seekVideo(e) { const rect = progressContainer.getBoundingClientRect(); video.currentTime = ((e.clientX - rect.left) / rect.width) * video.duration; }
+        function changeVolume() { video.volume = volumeSlider.value; }
+        function toggleFullscreen() { if(video.requestFullscreen) video.requestFullscreen(); else if(video.webkitRequestFullscreen) video.webkitRequestFullscreen(); }
 
-        function mineCoin() {
-            mineClicks++;
-            document.getElementById('clickCount').innerText = mineClicks;
-            
-            if(mineClicks >= 50) {
-                coins += 10;
-                mineClicks = 0;
-                document.getElementById('clickCount').innerText = mineClicks;
-                saveData();
-                
-                // Visual pop
-                const btn = document.querySelector('.mine-btn');
-                btn.style.boxShadow = "0 0 100px rgba(255, 215, 0, 1)";
-                setTimeout(() => btn.style.boxShadow = "0 0 20px rgba(255, 215, 0, 0.1)", 300);
-            }
-        }
+        function mineCoin() { mineClicks++; if(mineClicks >= 50) { coins += 10; mineClicks = 0; saveData(); } }
+        function buyAutoMiner() { let cost = 100 + (autoMiners * 50); if(coins >= cost) { coins -= cost; autoMiners++; saveData(); updateMinerUI(); } }
+        function updateMinerUI() { document.getElementById('minerCount').innerText = autoMiners; document.getElementById('minerCost').innerText = 100 + (autoMiners * 50); }
+        setInterval(() => { if(autoMiners > 0) { coins += autoMiners; updateCoinDisplay(); localStorage.setItem("netSeriesCoins", coins); } }, 1000);
 
-        // Code System
         function redeemCode() {
             const input = document.getElementById('codeInput').value.toUpperCase().trim();
             const msg = document.getElementById('codeMessage');
+            const foundCode = PROMO_CODES.find(c => c.code === input);
             
-            if (input === "NET_GODMODE") {
-                godMode = true;
-                localStorage.setItem("netSeriesGodMode", "true");
-                msg.style.color = "#34c759";
-                msg.innerText = "ACCESS GRANTED: All Series Unlocked!";
-            } 
-            else if (input === "RICH_KID_99") {
-                coins += 999999;
-                msg.style.color = "#34c759";
-                msg.innerText = "CHEAT ACTIVATED: Unlimited Coins!";
-            } 
-            else if (input === "SUDO_ADMIN") {
-                isOwner = true;
-                localStorage.setItem("netSeriesOwner", "true");
-                document.getElementById('ownerTabBtn').style.display = 'block';
-                msg.style.color = "red";
-                msg.innerText = "OWNER RECOGNIZED: Panel Unlocked.";
-            } 
-            else if (input === "GIMME_500") {
-                coins += 500;
-                msg.style.color = "#34c759";
-                msg.innerText = "REDEEMED: +500 Coins!";
-            } 
-            else {
-                msg.style.color = "red";
-                msg.innerText = "Invalid or Expired Code.";
+            if (foundCode) {
+                if (foundCode.type === "coins") {
+                    coins += foundCode.amount;
+                } else if (foundCode.type === "godmode") {
+                    godMode = true;
+                    localStorage.setItem("netSeriesGodMode", "true");
+                } else if (foundCode.type === "admin") {
+                    isOwner = true;
+                    localStorage.setItem("netSeriesOwner", "true");
+                    document.getElementById('ownerTabBtn').style.display = 'block';
+                } else if (foundCode.type === "episode") {
+                    if (!unlockedEpisodes.includes(foundCode.targetId)) {
+                        unlockedEpisodes.push(foundCode.targetId);
+                    }
+                } else if (foundCode.type === "series") {
+                    const targetSeries = DATABASE.find(s => s.id === foundCode.targetId);
+                    if (targetSeries) {
+                        targetSeries.episodes.forEach(ep => {
+                            if (!unlockedEpisodes.includes(ep.id)) {
+                                unlockedEpisodes.push(ep.id);
+                            }
+                        });
+                    }
+                }
+                msg.style.color = "white"; 
+                msg.innerText = foundCode.message;
+            } else {
+                msg.style.color = "#ff453a"; 
+                msg.innerText = "Invalid or expired code.";
             }
             
-            document.getElementById('codeInput').value = '';
+            document.getElementById('codeInput').value = ''; 
             saveData();
+            renderUnlockedPage();
         }
 
-        // Owner Functions
-        function giveFreeCoins(amount) {
-            coins += amount;
-            saveData();
-            alert("Added " + amount + " coins.");
-        }
+        function giveFreeCoins(amount) { coins += amount; saveData(); alert(`Injected ${amount} coins.`); }
+        function resetAccount() { if(confirm("Wipe Database?")) { localStorage.clear(); location.reload(); } }
+        function saveData() { localStorage.setItem("netSeriesCoins", coins); localStorage.setItem("netSeriesUnlocked", JSON.stringify(unlockedEpisodes)); localStorage.setItem("netSeriesAutoMiners", autoMiners); updateCoinDisplay(); }
+        function updateCoinDisplay() { document.getElementById('coinCount').innerText = coins.toLocaleString(); }
 
-        function resetAccount() {
-            if(confirm("Are you sure? This wipes everything.")) {
-                localStorage.clear();
-                location.reload();
+        window.onload = () => {
+            init();
+            const activeTab = document.querySelector('.nav-tabs button.active');
+            if(activeTab) {
+                const indicator = document.getElementById('tabIndicator');
+                indicator.style.width = activeTab.offsetWidth + 'px';
+                indicator.style.transform = `translateX(${activeTab.offsetLeft - 5}px)`;
             }
-        }
-
-        // Utility
-        function saveData() {
-            localStorage.setItem("netSeriesCoins", coins);
-            localStorage.setItem("netSeriesUnlocked", JSON.stringify(unlockedEpisodes));
-            updateCoinDisplay();
-        }
-
-        function updateCoinDisplay() {
-            document.getElementById('coinCount').innerText = coins.toLocaleString();
-        }
-
-        // Start
-        init();
+        };
     </script>
 </body>
 </html>
