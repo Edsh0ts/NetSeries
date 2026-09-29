@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Series</title>
+    <style>
+        /* APPLE GLASS & NETFLIX STYLING */
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --accent: #007aff;
+            --bg-color: #0f0f13;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(circle at top right, #1a1a2e 0%, #0f0f13 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(15, 15, 19, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: 1px; color: white; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        .logo span { color: var(--accent); }
+
+        .nav-links { display: flex; gap: 20px; }
+        .nav-links button {
+            background: none; border: none; color: var(--text-muted); font-size: 16px; cursor: pointer; transition: 0.3s;
+        }
+        .nav-links button:hover, .nav-links button.active { color: white; text-shadow: 0 0 8px rgba(255,255,255,0.5); }
+
+        .user-stats { display: flex; align-items: center; gap: 15px; }
+        .coin-badge {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); padding: 8px 15px;
+            border-radius: 20px; font-weight: bold; color: gold; backdrop-filter: blur(10px);
+        }
+
+        /* Main Container */
+        .container { padding: 40px 50px; display: none; }
+        .container.active { display: block; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Netflix Rows */
+        .row-title { font-size: 22px; margin-bottom: 15px; font-weight: 600; }
+        .series-row {
+            display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scrollbar-width: none;
+        }
+        .series-row::-webkit-scrollbar { display: none; }
+
+        /* Series Card (Apple Glass) */
+        .series-card {
+            min-width: 250px; height: 140px; border-radius: 15px; position: relative; cursor: pointer;
+            overflow: hidden; border: 1px solid var(--glass-border); transition: 0.3s;
+            background-size: cover; background-position: center;
+        }
+        .series-card:hover { transform: scale(1.05); border-color: rgba(255,255,255,0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .card-overlay {
+            position: absolute; bottom: 0; width: 100%; padding: 15px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+        .badge {
+            position: absolute; top: 10px; right: 10px; background: rgba(255, 0, 0, 0.8);
+            color: white; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Modal / Episode View */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 200;
+        }
+        .modal-content {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); width: 80%; max-width: 800px;
+            border-radius: 20px; padding: 30px; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+        .close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
+        
+        .episode-list { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
+        .episode-item {
+            display: flex; justify-content: space-between; align-items: center; padding: 15px;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 10px;
+        }
+        .buy-btn { background: #007aff; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .play-btn { background: #34c759; color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        /* Input & Forms */
+        .glass-input {
+            width: 100%; padding: 15px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border);
+            color: white; border-radius: 10px; font-size: 16px; margin-bottom: 15px; outline: none;
+            backdrop-filter: blur(10px);
+        }
+        .glass-btn {
+            width: 100%; padding: 15px; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            color: white; border-radius: 10px; font-size: 16px; cursor: pointer; transition: 0.3s; font-weight: bold;
+        }
+        .glass-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Mining Section */
+        .mining-area { text-align: center; padding: 50px; background: var(--glass-bg); border-radius: 20px; border: 1px solid var(--glass-border); }
+        .mine-btn {
+            width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle, #333, #111);
+            border: 2px solid var(--glass-border); color: gold; font-size: 20px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); transition: 0.1s;
+        }
+        .mine-btn:active { transform: scale(0.95); box-shadow: 0 0 50px rgba(255, 215, 0, 0.4); }
+        
+        #video-player { width: 100%; border-radius: 15px; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Net<span>Series</span></div>
+        <div class="nav-links">
+            <button class="active" onclick="showPage('home')">Home</button>
+            <button onclick="showPage('earn')">Earn Coins</button>
+            <button onclick="showPage('codes')">Enter Code</button>
+            <button id="ownerTabBtn" style="display:none; color: red;" onclick="showPage('owner')">Owner Panel</button>
+        </div>
+        <div class="user-stats">
+            <div class="coin-badge">💰 <span id="coinCount">0</span></div>
+        </div>
+    </nav>
+
+    <!-- HOME PAGE -->
+    <div id="home" class="container active">
+        <h2 class="row-title">Trending Now</h2>
+        <div class="series-row" id="trending-row"></div>
+    </div>
+
+    <!-- EARN COINS PAGE -->
+    <div id="earn" class="container">
+        <div class="mining-area">
+            <h2>Crypto-Mine for Coins</h2>
+            <p style="color: var(--text-muted); margin: 10px 0 30px 0;">It takes intense effort to earn. Click the core rapidly. Every 50 clicks earns you 10 coins.</p>
+            <button class="mine-btn" onclick="mineCoin()">MINE</button>
+            <p style="margin-top: 20px;">Clicks: <span id="clickCount">0</span> / 50</p>
+        </div>
+    </div>
+
+    <!-- CODE ENTRY PAGE -->
+    <div id="codes" class="container">
+        <div style="max-width: 400px; margin: 50px auto; text-align: center; background: var(--glass-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(20px);">
+            <h2 style="margin-bottom: 20px;">Redeem Code</h2>
+            <input type="text" id="codeInput" class="glass-input" placeholder="Enter secret code here...">
+            <button class="glass-btn" onclick="redeemCode()">Submit Code</button>
+            <p id="codeMessage" style="margin-top: 15px; font-weight: bold;"></p>
+        </div>
+    </div>
+
+    <!-- OWNER PANEL -->
+    <div id="owner" class="container">
+        <div style="background: rgba(255,0,0,0.1); border: 1px solid red; padding: 40px; border-radius: 20px;">
+            <h2 style="color: red;">Welcome, Boss.</h2>
+            <p>Owner tools unlocked.</p>
+            <br>
+            <button class="glass-btn" onclick="giveFreeCoins(10000)">Add 10,000 Coins to Account</button>
+            <br><br>
+            <button class="glass-btn" onclick="resetAccount()">Wipe Account Data</button>
+        </div>
+    </div>
+
+    <!-- SERIES MODAL -->
+    <div id="seriesModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">×</button>
+            <h2 id="modalTitle">Series Title</h2>
+            <video id="video-player" controls></video>
+            <div class="episode-list" id="episodeList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ====================================================================================
+        // ============================ 🛠️ EASY EDIT ZONE 🛠️ ==============================
+        // ====================================================================================
+        
+        // Add, remove, or edit your series here! Just follow the pattern.
+        const DATABASE = [
+            {
+                id: "series_01",                                      // A unique ID for the code
+                title: "Cyber Hacker",                                // Title of the show
+                image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500", // Image URL
+                comingSoon: false,                                    // true or false
+                episodes: [
+                    { id: "c1_ep1", title: "Episode 1: The Breach", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" },
+                    { id: "c1_ep2", title: "Episode 2: Firewalls", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
+                ]
+            },
+            {
+                id: "series_02",
+                title: "Space Frontiers",
+                image: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=500",
+                comingSoon: false,
+                episodes: [
+                    { id: "sp_ep1", title: "Episode 1: Liftoff", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" }
+                ]
+            },
+            {
+                id: "series_03",
+                title: "Dark Matter (Coming Soon)",
+                image: "https://images.unsplash.com/photo-1503431128871-161c60c60efa?w=500",
+                comingSoon: true, // This puts a "COMING SOON" badge on it
+                episodes: []
+            }
+        ];
+
+        // ====================================================================================
+        // =========================== ⚙️ APP LOGIC (DO NOT TOUCH) ⚙️ =========================
+        // ====================================================================================
+
+        let coins = parseInt(localStorage.getItem("netSeriesCoins")) || 0;
+        let unlockedEpisodes = JSON.parse(localStorage.getItem("netSeriesUnlocked")) || [];
+        let isOwner = localStorage.getItem("netSeriesOwner") === "true";
+        let godMode = localStorage.getItem("netSeriesGodMode") === "true";
+        let mineClicks = 0;
+
+        const PRICE_PER_EPISODE = 500;
+
+        // Initialize App
+        function init() {
+            updateCoinDisplay();
+            renderSeries();
+            if(isOwner) document.getElementById('ownerTabBtn').style.display = 'block';
+        }
+
+        // Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.container').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-links button').forEach(el => el.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Stop video if navigating away
+            document.getElementById('video-player').pause();
+            document.getElementById('video-player').style.display = 'none';
+        }
+
+        // Render Netflix Rows
+        function renderSeries() {
+            const row = document.getElementById('trending-row');
+            row.innerHTML = '';
+
+            DATABASE.forEach(series => {
+                const card = document.createElement('div');
+                card.className = 'series-card';
+                card.style.backgroundImage = `url('${series.image}')`;
+                card.onclick = () => openSeries(series.id);
+
+                let badgeHtml = series.comingSoon ? `<div class="badge">COMING SOON</div>` : '';
+
+                card.innerHTML = `
+                    ${badgeHtml}
+                    <div class="card-overlay">
+                        <h3>${series.title}</h3>
+                    </div>
+                `;
+                row.appendChild(card);
+            });
+        }
+
+        // Open Series Modal
+        function openSeries(seriesId) {
+            const series = DATABASE.find(s => s.id === seriesId);
+            if(series.comingSoon) {
+                alert("This series is coming soon!");
+                return;
+            }
+
+            document.getElementById('modalTitle').innerText = series.title;
+            document.getElementById('video-player').style.display = 'none';
+            document.getElementById('video-player').pause();
+            
+            const list = document.getElementById('episodeList');
+            list.innerHTML = '';
+
+            series.episodes.forEach(ep => {
+                const isUnlocked = unlockedEpisodes.includes(ep.id) || godMode;
+                
+                const item = document.createElement('div');
+                item.className = 'episode-item';
+                
+                let btnHtml = isUnlocked 
+                    ? `<button class="play-btn" onclick="playVideo('${ep.videoUrl}')">▶ Play</button>`
+                    : `<button class="buy-btn" onclick="buyEpisode('${ep.id}')">Unlock (500 💰)</button>`;
+
+                item.innerHTML = `
+                    <span style="font-weight: 500;">${ep.title}</span>
+                    ${btnHtml}
+                `;
+                list.appendChild(item);
+            });
+
+            document.getElementById('seriesModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('seriesModal').style.display = 'none';
+            document.getElementById('video-player').pause();
+        }
+
+        function playVideo(url) {
+            const player = document.getElementById('video-player');
+            player.style.display = 'block';
+            player.src = url;
+            player.play();
+        }
+
+        // Economy Logic
+        function buyEpisode(epId) {
+            if(coins >= PRICE_PER_EPISODE) {
+                coins -= PRICE_PER_EPISODE;
+                unlockedEpisodes.push(epId);
+                saveData();
+                openSeries(DATABASE.find(s => s.episodes.some(e => e.id === epId)).id); // refresh modal
+            } else {
+                alert("Not enough coins! You need 500. Go mine some or use a code.");
+            }
+        }
+
+        function mineCoin() {
+            mineClicks++;
+            document.getElementById('clickCount').innerText = mineClicks;
+            
+            if(mineClicks >= 50) {
+                coins += 10;
+                mineClicks = 0;
+                document.getElementById('clickCount').innerText = mineClicks;
+                saveData();
+                
+                // Visual pop
+                const btn = document.querySelector('.mine-btn');
+                btn.style.boxShadow = "0 0 100px rgba(255, 215, 0, 1)";
+                setTimeout(() => btn.style.boxShadow = "0 0 20px rgba(255, 215, 0, 0.1)", 300);
+            }
+        }
+
+        // Code System
+        function redeemCode() {
+            const input = document.getElementById('codeInput').value.toUpperCase().trim();
+            const msg = document.getElementById('codeMessage');
+            
+            if (input === "NET_GODMODE") {
+                godMode = true;
+                localStorage.setItem("netSeriesGodMode", "true");
+                msg.style.color = "#34c759";
+                msg.innerText = "ACCESS GRANTED: All Series Unlocked!";
+            } 
+            else if (input === "RICH_KID_99") {
+                coins += 999999;
+                msg.style.color = "#34c759";
+                msg.innerText = "CHEAT ACTIVATED: Unlimited Coins!";
+            } 
+            else if (input === "SUDO_ADMIN") {
+                isOwner = true;
+                localStorage.setItem("netSeriesOwner", "true");
+                document.getElementById('ownerTabBtn').style.display = 'block';
+                msg.style.color = "red";
+                msg.innerText = "OWNER RECOGNIZED: Panel Unlocked.";
+            } 
+            else if (input === "GIMME_500") {
+                coins += 500;
+                msg.style.color = "#34c759";
+                msg.innerText = "REDEEMED: +500 Coins!";
+            } 
+            else {
+                msg.style.color = "red";
+                msg.innerText = "Invalid or Expired Code.";
+            }
+            
+            document.getElementById('codeInput').value = '';
+            saveData();
+        }
+
+        // Owner Functions
+        function giveFreeCoins(amount) {
+            coins += amount;
+            saveData();
+            alert("Added " + amount + " coins.");
+        }
+
+        function resetAccount() {
+            if(confirm("Are you sure? This wipes everything.")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // Utility
+        function saveData() {
+            localStorage.setItem("netSeriesCoins", coins);
+            localStorage.setItem("netSeriesUnlocked", JSON.stringify(unlockedEpisodes));
+            updateCoinDisplay();
+        }
+
+        function updateCoinDisplay() {
+            document.getElementById('coinCount').innerText = coins.toLocaleString();
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>
